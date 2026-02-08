@@ -4,10 +4,22 @@ import ProductCard from "./components/ProductCard"// App.jsx
 function App() {
   // This will store an array of cart items instead of just a count
   const [cart, setCart] = useState([])
+  const [isCartOpen, setIsCartOpen] = useState(false) // Track if cart is open
 
   // Function to add product to cart
   const addToCart = (product) => {
     setCart([...cart, product])
+  }
+
+  // Toggle cart open/close
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen)
+  }
+
+  // Remove item from cart by index
+  const removeFromCart = (index) => {
+    const newCart = cart.filter((_, i) => i !== index)
+    setCart(newCart)
   }
 
   // Calculate total price
@@ -49,11 +61,14 @@ function App() {
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Our Products</h1>
-        <div className="bg-blue-500 text-white px-4 py-2 rounded">
-          <div className="font-bold">Cart: {cart.length} items</div>
-        <div className="text-sm">Total: ${totalPrice.toFixed(2)}</div>
-      </div>
-      </div>
+        <button
+        onClick={toggleCart}
+        className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">
+          🛒Cart: {cart.length} - ${totalPrice.toFixed(0)}
+          </button>
+        </div>
+      
+      {/* Product Grid */}
       <div className="grid grid-cols md:grid-cols-2 lg:grid-cols-4 gap-4">
         {products.map(product => (
           <ProductCard 
@@ -63,6 +78,51 @@ function App() {
           />
         ))}
       </div>
+
+      {/* Cart Sidebar - Only shows when isCartOpen is true */}
+      {isCartOpen && (
+        <div className="fixed right-0 stop-0 h-full w-96 bg-white shadow-2xl p-6 overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Shopping cart</h2>
+          <button 
+          onClick={toggleCart} className="text-2xl hover:text-red-500">
+            X
+          </button>
+        </div>
+
+        {/* Show message if cart is empty */}
+        {cart.lenth === 0? (
+          <p className="text-gray-500">Your cart is empty</p> ) : (
+            <>
+            {/* List all cart items</> */}
+            <div className="space-y-4 mb-6">
+              {cart.map((item, index) => (
+                <div key={index} className="border p-4 rounded-lg">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-bold">{item.name}</h3>
+                    <p className="font-bold">{item.price}</p>
+                    </div>                    <button 
+                      onClick={() => removeFromCart(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                </div>
+              ))}
+            </div>
+
+              {/* Total Price */}
+              <div className="border-t pt-4">
+                <div className="flex justify-between items-center text-xl font-bold">
+                  <span>Total:</span>
+                  <span>${totalPrice.toFixed(2)}  </span>
+                </div>
+                <button className="w-full bg-green-500 text-white py-3 rounded-lg mt-4 hover:bg-green-600">Checkout</button>
+              </div>
+              </>
+        )}
+    </div>
+      )}
     </div>
   )
 }
