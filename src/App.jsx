@@ -5,6 +5,7 @@ function App() {
   // This will store an array of cart items instead of just a count
   const [cart, setCart] = useState([])
   const [isCartOpen, setIsCartOpen] = useState(false) // Track if cart is open
+  const [searchTerm, setSearchTerm] = useState("")  // Track search input
 
   // Function to add product to cart
   const addToCart = (product) => {
@@ -57,8 +58,14 @@ function App() {
       image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400"
     }
   ]
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
     <div className="container mx-auto py-10">
+      {/* Header with search bar */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Our Products</h1>
         <button
@@ -67,16 +74,38 @@ function App() {
           🛒Cart: {cart.length} - ${totalPrice.toFixed(0)}
           </button>
         </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full py-4 border-2 border-gray-300rounded-lg focus:outline-none focus:border-blue-500 mb-4"
+        />
+        {searchTerm && (
+          <p className="text-gray-600 mt-2">
+            Found {filteredProducts.length} products(s) matching "{searchTerm}"
+          </p>
+        )}
+      </div>
       
       {/* Product Grid */}
       <div className="grid grid-cols md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {products.map(product => (
+        {filteredProducts.length> 0 ? (
+          products.map(product => (
           <ProductCard 
             key={product.id}
             product={product}
             onAddToCart={addToCart}
           />
-        ))}
+        ))
+      ) : (
+        <div className="col-span-3 text-center py-12 text-gray-500"> 
+        No products found matching "{searchTerm}"
+        </div>
+      )}
       </div>
 
       {/* Cart Sidebar - Only shows when isCartOpen is true */}
