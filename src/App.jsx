@@ -147,8 +147,9 @@ function App() {
               {cart.map((item, index) => (
                 <div key={index} className="border p-4 rounded-lg">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-bold">{item.name}</h3>
-                    <p className="font-bold">{item.price}</p>
+                    <h3 className="font-bold">{item.product.name}</h3>
+                    <p className="font-bold">{item.product.price}</p>
+                    <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                   </div>
                   <button
                     onClick={() => removeFromCart(index)}
